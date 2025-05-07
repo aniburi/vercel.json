@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Projapati</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>Welcome to Projapati</h1>
+  <p>This is a simple HTML page deployed on Vercel.</p>
+</body>
+</html>
+
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ভালোবাসার গেম | প্রজাপতি</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            background: linear-gradient(to bottom, #ffcce6, #d9f2ff);
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            touch-action: none;
+        }
+        
+        .love-message {
+            position: relative;
+            z-index: 100;
+            text-align: center;
+            color: #ff1493;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 3s ease-in-out;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+        
+        .game-area {
+            position: relative;
+            width: 90%;
+            height: 200px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 15px;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .letter-box {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-color: #ff69b4;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: grab;
+            user-select: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+            touch-action: none;
+        }
+        
+        .butterfly {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            z-index: 1;
+            animation: float 15s linear infinite;
+            opacity: 0.8;
+            pointer-events: none;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            25% {
+                transform: translate(100px, 50px) rotate(10deg);
+            }
+            50% {
+                transform: translate(200px, -30px) rotate(-5deg);
+            }
+            75% {
+                transform: translate(100px, -50px) rotate(5deg);
+            }
+            100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .instructions {
+            margin-top: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .success-message {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            text-align: center;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        .success-message h2 {
+            color: #ff1493;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="love-message">
+        <h1>আমি তোমাকে অনেক অনেক ভালোবাসি</h1>
+        <p>❤️ প্রজাপতি ❤️</p>
+    </div>
+    
+    <div class="game-area" id="gameArea">
+        <!-- Letters will be added here by JavaScript -->
+    </div>
+    
+    <div class="instructions">
+        "I LOVE YOU TOO" বাক্যটি সাজানোর চেষ্টা করুন।<br>
+        অক্ষরগুলো টেনে সঠিক স্থানে রাখুন।
+    </div>
+    
+    <div class="success-message" id="successMessage">
+        <h2>অভিনন্দন!</h2>
+        <p>আপনি সঠিকভাবে বাক্যটি সাজিয়েছেন! ❤️</p>
+    </div>
+
+    <script>
+        // রঙিন প্রজাপতি তৈরি
+        const colors = ['#ff1493', '#ff69b4', '#ff00ff', '#9370db', '#00bfff', '#ff6347', '#ffd700'];
+        const butterflyImages = [
+            'https://cdn.pixabay.com/photo/2017/01/31/23/42/butterfly-2027567_960_720.png',
+            'https://cdn.pixabay.com/photo/2017/01/31/23/42/butterfly-2027568_960_720.png',
+            'https://cdn.pixabay.com/photo/2017/01/31/23/42/butterfly-2027569_960_720.png'
+        ];
+        
+        // ১৫টি প্রজাপতি তৈরি
+        for (let i = 0; i < 15; i++) {
+            createButterfly();
+        }
+        
+        function createButterfly() {
+            const butterfly = document.createElement('div');
+            butterfly.className = 'butterfly';
+            
+            const randomImage = butterflyImages[Math.floor(Math.random() * butterflyImages.length)];
+            butterfly.style.backgroundImage = `url(${randomImage})`;
+            
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            butterfly.style.filter = `hue-rotate(${Math.random() * 360}deg) brightness(1.2)`;
+            
+            const size = 30 + Math.random() * 50;
+            butterfly.style.width = `${size}px`;
+            butterfly.style.height = `${size}px`;
+            
+            butterfly.style.left = `${Math.random() * 100}vw`;
+            butterfly.style.top = `${Math.random() * 100}vh`;
+            
+            const duration = 10 + Math.random() * 20;
+            butterfly.style.animationDuration = `${duration}s`;
+            
+            document.body.appendChild(butterfly);
+            
+            setInterval(() => {
+                butterfly.style.transform = `translate(${Math.random() * 200 - 100}px, ${Math.random() * 200 - 100}px) rotate(${Math.random() * 20 - 10}deg)`;
+            }, 3000);
+        }
+        
+        // গেম লজিক
+        const gameArea = document.getElementById('gameArea');
+        const successMessage = document.getElementById('successMessage');
+        const phrase = "I LOVE YOU TOO";
+        const letters = phrase.split('').filter(c => c !== ' ');
+        let draggedItem = null;
+        
+        // এলোমেলো অবস্থানে অক্ষর তৈরি
+        letters.forEach((letter, index) => {
+            const letterBox = document.createElement('div');
+            letterBox.className = 'letter-box';
+            letterBox.textContent = letter;
+            letterBox.id = `letter-${index}`;
+            letterBox.style.left = `${10 + Math.random() * 70}%`;
+            letterBox.style.top = `${10 + Math.random() * 60}%`;
+            letterBox.style.backgroundColor = colors[index % colors.length];
+            
+            // ড্র্যাগ এন্ড ড্রপ ইভেন্ট
+            letterBox.addEventListener('mousedown', startDrag);
+            letterBox.addEventListener('touchstart', startDrag, { passive: false });
+            
+            gameArea.appendChild(letterBox);
+        });
+        
+        function startDrag(e) {
+            e.preventDefault();
+            draggedItem = this;
+            
+            // টাচ ইভেন্ট হ্যান্ডলিং
+            if (e.type === 'touchstart') {
+                const touch = e.touches[0];
+                this.startX = touch.clientX - this.getBoundingClientRect().left;
+                this.startY = touch.clientY - this.getBoundingClientRect().top;
+            } else {
+                this.startX = e.offsetX;
+                this.startY = e.offsetY;
+            }
+            
+            document.addEventListener('mousemove', dragItem);
+            document.addEventListener('touchmove', dragItem, { passive: false });
+            document.addEventListener('mouseup', stopDrag);
+            document.addEventListener('touchend', stopDrag);
+        }
+        
+        function dragItem(e) {
+            if (!draggedItem) return;
+            e.preventDefault();
+            
+            const gameRect = gameArea.getBoundingClientRect();
+            let x, y;
+            
+            if (e.type === 'touchmove') {
+                const touch = e.touches[0];
+                x = touch.clientX - gameRect.left - draggedItem.startX;
+                y = touch.clientY - gameRect.top - draggedItem.startY;
+            } else {
+                x = e.clientX - gameRect.left - draggedItem.startX;
+                y = e.clientY - gameRect.top - draggedItem.startY;
+            }
+            
+            // গেম এরিয়ার মধ্যে সীমাবদ্ধ রাখা
+            x = Math.max(0, Math.min(x, gameRect.width - draggedItem.offsetWidth));
+            y = Math.max(0, Math.min(y, gameRect.height - draggedItem.offsetHeight));
+            
+            draggedItem.style.left = `${x}px`;
+            draggedItem.style.top = `${y}px`;
+            
+            checkCompletion();
+        }
+        
+        function stopDrag() {
+            draggedItem = null;
+            document.removeEventListener('mousemove', dragItem);
+            document.removeEventListener('touchmove', dragItem);
+            document.removeEventListener('mouseup', stopDrag);
+            document.removeEventListener('touchend', stopDrag);
+        }
+        
+        function checkCompletion() {
+            const letterBoxes = document.querySelectorAll('.letter-box');
+            const boxesArray = Array.from(letterBoxes);
+            
+            // বাম থেকে ডানে সাজানো হয়েছে কিনা চেক
+            const sortedLeft = [...boxesArray].sort((a, b) => 
+                a.getBoundingClientRect().left - b.getBoundingClientRect().left
+            );
+            
+            const currentPhrase = sortedLeft.map(box => box.textContent).join('');
+            
+            if (currentPhrase === phrase.replace(/\s/g, '')) {
+                showSuccess();
+            }
+        }
+        
+        function showSuccess() {
+            successMessage.style.display = 'block';
+            
+            // 3 সেকেন্ড পর মেসেজ লুকিয়ে দিন
+            setTimeout(() => {
+                successMessage.style.display = 'none';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
